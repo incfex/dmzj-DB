@@ -1,0 +1,24 @@
+{
+  "name": "dmzj-db",
+  "version": "0.1.0",
+  "description": "A database aim to store all resources from dmzj",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "mariadb": "^2.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/incfex/dmzj-DB.git"
+  },
+  "author": "Gakume Hyoma <kuro@kuroa.me>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/incfex/dmzj-DB/issues"
+  },
+  "homepage": "https://github.com/incfex/dmzj-DB#readme"
+}
