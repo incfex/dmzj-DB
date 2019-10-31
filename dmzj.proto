@@ -31,7 +31,7 @@ message Comment {
 }
 
 message Comments {
-  uint32 comment_cout = 1;
+  uint32 comment_count = 1;
   repeated Comment latest_comment = 2;
 }
 

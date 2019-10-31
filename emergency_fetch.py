@@ -12,51 +12,67 @@ import dmzj_pb2
 lck = multiprocessing.Lock()
 
 def validate(r):
-  if (r.text == "漫画不存在!!!" or r.text == "[]" or r.text == '"Locked!"'):
+  #print(r.text)
+  if (r.text == "[]" or r.text == '"Locked!"'):
+    return -1
+  elif (r.text == "漫画不存在!!!"):
     return 0
   else:
     return 1
 
 def crawler(comicId):
+  logging.info("%s#Trying v3 api", str(comicId))
   v3url = "http://v3api.dmzj.com/comic/" + str(comicId) + ".json"
   r = requests.get(v3url)
-  if (validate(r)):
-    return r.text
-  logging.info(" %s#Trying v2 api", str(comicId))
+  if (validate(r) == -1 or validate(r) == 1):
+    return r
+  logging.info("%s#Trying v2 api", str(comicId))
   v2url = "http://v2.api.dmzj.com/comic/" + str(comicId) + ".json"
   r = requests.get(v2url)
-  return r.text
+  return r
 
-def pb_parser(data):
-  dmzj = dmzj_pb2.Dmzj()
+def pb_parser(r):
+  # Acquire the file lock
   lck.acquire()
+  # Read from protobuf
+  dmzj = dmzj_pb2.Dmzj()
   try:
     with open("dmzj.bin", "rb") as f:
       dmzj.ParseFromString(f.read())
   except IOError:
-    logging.error("dmzj.bin: File not Found")
+    logging.error("dmzj.bin: File not Found. Creating a new file.")
 
-  _manga = dmzj.mangas.add()
-  _manga.id = data.get("id", -1)
+  # Create new manga message
+  dmzjD = json_format.MessageToDict(dmzj)
+  mangas = dmzjD.get("mangas", None)
+  if (mangas == None):
+    dmzjD["mangas"] = []
+    mangas = dmzjD.get("mangas", None)
+
+  mangas.append(r.json())
+  json_format.Parse(json.dumps(dmzjD), dmzj)
   print(json_format.MessageToJson(dmzj))
+  with open("dmzj.bin", "wb") as f:
+    f.write(dmzj.SerializeToString())
+
+  # Release the file lock
   lck.release()
     
 def thread_job(comicId):
   r = crawler(comicId)
-  if (validate(r)):
-    pb_parser(json.loads(r))
-  #script_dir = os.path.dirname(__file__)
-  #rel_path = "offline_data/" + str(comicId) + ".txt"
-  #abs_path = os.path.join(script_dir, rel_path)
-  #with open(abs_path, 'w') as f:
-  #  f.write(r)
+  # Only record normal result
+  if (validate(r) == 1):
+    pb_parser(r)
   return
 
 def main():
   logging.basicConfig(level=logging.INFO)
 
-  comic = range(1, 3)
-  
+  comic = range(1, 10)
+
+  #thread_job(8)
+  #return
+
   with concurrent.futures.ThreadPoolExecutor() as executor:
     executor.map(thread_job, comic)
 
