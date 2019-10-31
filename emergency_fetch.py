@@ -21,12 +21,12 @@ def validate(r):
     return 1
 
 def crawler(comicId):
-  logging.info("%s#Trying v3 api", str(comicId))
+  logging.debug("%s#Trying v3 api", str(comicId))
   v3url = "http://v3api.dmzj.com/comic/" + str(comicId) + ".json"
   r = requests.get(v3url)
   if (validate(r) == -1 or validate(r) == 1):
     return r
-  logging.info("%s#Trying v2 api", str(comicId))
+  logging.debug("%s#Trying v2 api", str(comicId))
   v2url = "http://v2.api.dmzj.com/comic/" + str(comicId) + ".json"
   r = requests.get(v2url)
   return r
@@ -51,7 +51,7 @@ def pb_parser(r):
 
   mangas.append(r.json())
   json_format.Parse(json.dumps(dmzjD), dmzj)
-  print(json_format.MessageToJson(dmzj))
+  #print(json_format.MessageToJson(dmzj))
   with open("dmzj.bin", "wb") as f:
     f.write(dmzj.SerializeToString())
 
@@ -62,13 +62,14 @@ def thread_job(comicId):
   r = crawler(comicId)
   # Only record normal result
   if (validate(r) == 1):
+    logging.info("%s#Found. Recording...", str(comicId))
     pb_parser(r)
   return
 
 def main():
   logging.basicConfig(level=logging.INFO)
 
-  comic = range(1, 10)
+  comic = range(1, 52000)
 
   #thread_job(8)
   #return
