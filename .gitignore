@@ -2,3 +2,5 @@
 /node_modules
 /offline_data
 /__pycache__
+*.log
+*.bin

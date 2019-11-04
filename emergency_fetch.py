@@ -24,15 +24,26 @@ def crawler(comicId):
   logging.debug("%s#Trying v3 api", str(comicId))
   headers = {'user-agent': 'Mozilla/5.0'}
   v3url = "http://v3api.dmzj.com/comic/" + str(comicId) + ".json"
-  try:
-    r = requests.get(v3url, headers=headers)
-  except:
-    print("Exception happened")
+  tryloop = 5
+  while tryloop > 0:
+    try:
+      r = requests.get(v3url, headers=headers, timeout=10)
+      tryloop = 0
+    except:
+      logging.warning("%s#Exception Happened!", str(comicId))
+      tryloop = tryloop - 1
   if (validate(r) == -1 or validate(r) == 1):
     return r
   logging.debug("%s#Trying v2 api", str(comicId))
   v2url = "http://v2.api.dmzj.com/comic/" + str(comicId) + ".json"
-  r = requests.get(v2url, headers=headers)
+  tryloop = True
+  while tryloop > 0:
+    try:
+      r = requests.get(v2url, headers=headers, timeout=10)
+      tryloop = 0
+    except:
+      logging.warning("%s#Exception Happened!", str(comicId))
+      tryloop = tryloop - 1
   return r
 
 def pb_parser(r):
@@ -71,7 +82,7 @@ def thread_job(comicId):
   return
 
 def main():
-  logging.basicConfig(level=logging.INFO)
+  logging.basicConfig(filename='dmzj.log', level=logging.INFO)
 
   comic = range(1, 10)
 
