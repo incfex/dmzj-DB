@@ -70,7 +70,7 @@ def thread_job(comicId):
 def main():
   logging.basicConfig(level=logging.INFO)
 
-  comic = range(1, 52000)
+  comic = range(1, 1000)
 
   #thread_job(8)
   #return
