@@ -24,7 +24,10 @@ def crawler(comicId):
   logging.debug("%s#Trying v3 api", str(comicId))
   headers = {'user-agent': 'Mozilla/5.0'}
   v3url = "http://v3api.dmzj.com/comic/" + str(comicId) + ".json"
-  r = requests.get(v3url, headers=headers)
+  try:
+    r = requests.get(v3url, headers=headers)
+  except:
+    print("Exception happened")
   if (validate(r) == -1 or validate(r) == 1):
     return r
   logging.debug("%s#Trying v2 api", str(comicId))
@@ -70,7 +73,7 @@ def thread_job(comicId):
 def main():
   logging.basicConfig(level=logging.INFO)
 
-  comic = range(1, 1000)
+  comic = range(1, 10)
 
   #thread_job(8)
   #return
