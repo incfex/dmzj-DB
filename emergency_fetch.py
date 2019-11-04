@@ -22,13 +22,14 @@ def validate(r):
 
 def crawler(comicId):
   logging.debug("%s#Trying v3 api", str(comicId))
+  headers = {'user-agent': 'Mozilla/5.0'}
   v3url = "http://v3api.dmzj.com/comic/" + str(comicId) + ".json"
-  r = requests.get(v3url)
+  r = requests.get(v3url, headers=headers)
   if (validate(r) == -1 or validate(r) == 1):
     return r
   logging.debug("%s#Trying v2 api", str(comicId))
   v2url = "http://v2.api.dmzj.com/comic/" + str(comicId) + ".json"
-  r = requests.get(v2url)
+  r = requests.get(v2url, headers=headers)
   return r
 
 def pb_parser(r):
