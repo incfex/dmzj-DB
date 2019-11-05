@@ -32,6 +32,8 @@ def crawler(comicId):
     except:
       logging.warning("%s#Exception Happened!", str(comicId))
       tryloop = tryloop - 1
+      if tryloop == 0:
+        logging.error("%s#Retries Exhausted!", str(comicId))
   if (validate(r) == -1 or validate(r) == 1):
     return r
   logging.debug("%s#Trying v2 api", str(comicId))
