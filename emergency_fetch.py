@@ -86,7 +86,7 @@ def thread_job(comicId):
 def main():
   logging.basicConfig(filename='dmzj.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
-  comic = range(1, 10)
+  comic = range(2000, 5000)
 
   #thread_job(8)
   #return
